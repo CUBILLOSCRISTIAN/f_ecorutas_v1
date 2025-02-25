@@ -1,0 +1,22 @@
+name: f_ecorutas_v1
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ^3.6.1
+
+dependencies:
+  dartz: ^0.10.1
+  flutter:
+    sdk: flutter
+  geolocator: ^13.0.2
+  permission_handler: ^11.4.0
+
+dev_dependencies:
+  flutter_lints: ^5.0.0
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
