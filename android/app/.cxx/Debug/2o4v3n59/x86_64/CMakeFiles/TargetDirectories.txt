@@ -1,0 +1,2 @@
+/Users/cubi/Documents/WorkSpace_Cubi/Workspace_Flutter/f_ecorutas_v1/android/app/.cxx/Debug/2o4v3n59/x86_64/CMakeFiles/edit_cache.dir
+/Users/cubi/Documents/WorkSpace_Cubi/Workspace_Flutter/f_ecorutas_v1/android/app/.cxx/Debug/2o4v3n59/x86_64/CMakeFiles/rebuild_cache.dir
