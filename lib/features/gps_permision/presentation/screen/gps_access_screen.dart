@@ -1,13 +1,21 @@
+import 'package:f_ecorutas_v1/features/gps_permision/presentation/blocs/gps/gps_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class LoadingScreen extends StatelessWidget {
-  const LoadingScreen({super.key});
+class GpsAccessScreen extends StatelessWidget {
+  const GpsAccessScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: _AccessButton(),
+        child: BlocBuilder<GpsBloc, GpsState>(
+          builder: (context, state) {
+            return !state.isGpsEnabled
+                ? const _EnableGpsMessage()
+                : const _AccessButton();
+          },
+        ),
       ),
     );
   }
@@ -23,7 +31,10 @@ class _AccessButton extends StatelessWidget {
       children: [
         const Text('Es necesario habilitar el GPS'),
         ElevatedButton(
-          onPressed: () {},
+          onPressed: () {
+            final gpsBloc = BlocProvider.of<GpsBloc>(context);
+            gpsBloc.askGpsAccess();
+          },
           child: const Text('Habilitar GPS'),
         ),
       ],
@@ -32,9 +43,7 @@ class _AccessButton extends StatelessWidget {
 }
 
 class _EnableGpsMessage extends StatelessWidget {
-  const _EnableGpsMessage({
-    super.key,
-  });
+  const _EnableGpsMessage();
 
   @override
   Widget build(BuildContext context) {

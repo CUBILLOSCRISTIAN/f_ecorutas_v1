@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.example.f_ecorutas_v1"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 34
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
