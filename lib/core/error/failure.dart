@@ -5,7 +5,7 @@ abstract class Failure {
 }
 
 class CreateFailure extends Failure {
-  CreateFailure() : super('Create Failure');
+  CreateFailure(super.message);
 }
 
 class JoinFailure extends Failure {

@@ -1,14 +1,14 @@
 class RouteEntity {
   String id;
-  String codigo;
-  RouteStatus estado;
-  List<String> visitantes;
+  String code;
+  RouteStatus status;
+  List<String> participants;
 
   RouteEntity(
       {required this.id,
-      required this.codigo,
-      this.estado = RouteStatus.esperando,
-      this.visitantes = const []});
+      required this.code,
+      this.status = RouteStatus.esperando,
+      this.participants = const []});
 
   // //toMap
   // Map<String, dynamic> toMap() {

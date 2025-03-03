@@ -9,8 +9,23 @@ sealed class RouteState extends Equatable {
 
 final class RouteInitial extends RouteState {}
 
-class CreateSuccessState extends RouteState {}
+final class RouteLoadingState extends RouteState {}
 
-class JoinSuccessState extends RouteState {}
+final class OperationSuccessState extends RouteState {
+  final String message;
+  final String code;
 
-class FinishSuccessState extends RouteState {}
+  const OperationSuccessState({required this.message, required this.code});
+
+  @override
+  List<Object> get props => [message];
+}
+
+final class RouteErrorState extends RouteState {
+  final String message;
+
+  const RouteErrorState({required this.message});
+
+  @override
+  List<Object> get props => [message];
+}

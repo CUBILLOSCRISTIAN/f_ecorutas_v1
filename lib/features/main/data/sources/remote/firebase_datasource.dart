@@ -1,3 +1,4 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:f_ecorutas_v1/core/error/failure.dart';
@@ -32,11 +33,11 @@ class FirebaseDataSource implements IRemoteDatasource {
   @override
   Future<Either<Failure, Unit>> createRoute(RouteModel model) async {
     try {
-      await _firestore.collection('rutas').doc(model.codigo).set(model.toMap());
+      await _firestore.collection('rutas').doc(model.code).set(model.toJson());
 
       return Right(unit);
     } catch (e) {
-      return Left(CreateFailure());
+      return Left(CreateFailure(e.toString()));
     }
   }
 

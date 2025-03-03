@@ -12,8 +12,13 @@ class RouteRepositoryImpl implements IRouteRepository {
 
   @override
   Future<Either<Failure, Unit>> createRoute(RouteEntity entity) async {
-    RouteModel model = RouteModel.toEntity(entity);
-    return await _remoteDatasource.createRoute(model);
+    try {
+      final model = RouteModel.toEntity(entity);
+      return await _remoteDatasource.createRoute(model);
+    } catch (e) {
+      print(e);
+      return Left(CreateFailure(e.toString()));
+    }
   }
 
   @override

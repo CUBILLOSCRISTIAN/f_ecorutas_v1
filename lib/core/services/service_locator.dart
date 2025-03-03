@@ -31,9 +31,9 @@ void setupServiceLocator() {
       FinishRouteUsecase(getIt<IRouteRepository>()));
 
   getIt.registerSingleton<RouteBloc>(RouteBloc(
-    getIt<CreateRouteUsecase>(),
-    getIt<JoinRouteUsecase>(),
-    getIt<FinishRouteUsecase>(),
+    createRouteUsecase: getIt<CreateRouteUsecase>(),
+    joinRouteUsecase: getIt<JoinRouteUsecase>(),
+    finishRouteUsecase: getIt<FinishRouteUsecase>(),
   ));
 
   // Registra el BLoC como una instancia única (singleton)

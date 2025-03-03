@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "647769673819",
+    "project_id": "ecorutasv1",
+    "storage_bucket": "ecorutasv1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:647769673819:android:fab62c4a16e0f1fc74af7e",
+        "android_client_info": {
+          "package_name": "com.example.f_ecorutas_v1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCB-yYnekYZJdYhR1mVWePk_0S-X0U47I8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
