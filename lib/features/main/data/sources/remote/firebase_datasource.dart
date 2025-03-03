@@ -17,11 +17,9 @@ class FirebaseDataSource implements IRemoteDatasource {
 
       if (snapshot.exists) {
         // Obtener los datos del usuario actual
-
-        await _firestore
-            .collection('rutas')
-            .doc(routeId)
-            .set({'participantes': userName}, SetOptions(merge: true));
+        await _firestore.collection('rutas').doc(routeId).update({
+          'participantes': FieldValue.arrayUnion([{'nombre': userName}])
+        });
         return Right(unit);
       }
       return Left(JoinFailure());
