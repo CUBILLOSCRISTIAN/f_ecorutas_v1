@@ -5,6 +5,7 @@ import 'package:f_ecorutas_v1/features/main/data/sources/local/i_local_datasourc
 import 'package:f_ecorutas_v1/features/main/data/sources/remote/i_remote_datasource.dart';
 import 'package:f_ecorutas_v1/features/main/domain/entity/route.dart';
 import 'package:f_ecorutas_v1/features/main/domain/repositories/i_route_repository.dart';
+import 'package:workmanager/workmanager.dart';
 
 class RouteRepositoryImpl implements IRouteRepository {
   final IRemoteDatasource _remoteDatasource;
@@ -27,6 +28,8 @@ class RouteRepositoryImpl implements IRouteRepository {
     String routeId,
     String userName,
   ) async {
+    Workmanager()
+        .cancelByUniqueName('track_location_task'); // Detiene el tracking
     List<Map<String, dynamic>> positions =
         _localDatasource.positions.map((e) => e.toJson()).toList();
     print('positions: $positions');
@@ -64,7 +67,14 @@ class RouteRepositoryImpl implements IRouteRepository {
   @override
   Future<Either<Failure, Unit>> startTranking() async {
     try {
-      _localDatasource.startTracking();
+      Workmanager().registerOneOffTask(
+        'track_location_task',
+        'start_tracking',
+        constraints: Constraints(
+          networkType: NetworkType.connected, // Solo con internet
+          requiresBatteryNotLow: true, // No se ejecuta si la batería está baja
+        ),
+      );
       return Right(unit);
     } catch (e) {
       return Left(ErrorFailure());

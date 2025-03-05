@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:dartz/dartz.dart';
@@ -9,6 +10,7 @@ import 'package:geolocator/geolocator.dart';
 
 class LocalDatasource implements ILocalDatasource {
   final List<Position> _positions = [];
+  Timer? _trackingTimer;
 
   @override
   List<Position> get positions => _positions;
@@ -21,7 +23,6 @@ class LocalDatasource implements ILocalDatasource {
       final List<dynamic> data = json.decode(response);
 
       final questions = data.map((e) => QuestionModel.fromJson(e)).toList();
-
       return Right(questions);
     } catch (e) {
       return Left(ErrorFailure());
@@ -31,18 +32,24 @@ class LocalDatasource implements ILocalDatasource {
   @override
   Future<void> startTracking() async {
     const duration = Duration(seconds: 15);
-    while (true) {
+
+    _trackingTimer = Timer.periodic(duration, (timer) async {
       try {
         Position position = await Geolocator.getCurrentPosition(
             locationSettings:
                 LocationSettings(accuracy: LocationAccuracy.high));
 
         _positions.add(position);
-        print('Position: ${position}');
+        print('Nueva posición: ${position}');
       } catch (e) {
-        print('Error getting location: $e');
+        print('Error obteniendo ubicación: $e');
       }
-      await Future.delayed(duration);
-    }
+    });
   }
-} 
+
+  @override
+  void stopTracking() {
+    _trackingTimer?.cancel();
+    print('Seguimiento de ubicación detenido');
+  }
+}

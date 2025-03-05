@@ -7,4 +7,5 @@ abstract interface class ILocalDatasource {
   Future<Either<Failure, List<QuestionModel>>> loadQuestions();
   Future<void> startTracking();
   List<Position> get positions;
+  void stopTracking();
 }
