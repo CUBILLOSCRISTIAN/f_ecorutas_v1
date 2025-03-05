@@ -1,4 +1,8 @@
+import 'package:f_ecorutas_v1/core/services/service_locator.dart';
+import 'package:f_ecorutas_v1/features/main/presentation/blocs/route/route_bloc.dart';
 import 'package:f_ecorutas_v1/features/main/presentation/blocs/wating_room/wating_room_bloc.dart';
+import 'package:f_ecorutas_v1/features/main/presentation/screen/guide_screen.dart';
+import 'package:f_ecorutas_v1/features/main/presentation/screen/participant_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -35,6 +39,8 @@ class _WatingRoomView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final RouteBloc routeBloc = getIt<RouteBloc>();
+
     return BlocListener<WatingRoomBloc, WatingRoomState>(
       listener: (context, state) {
         if (state is RouteStartedState) {
@@ -43,16 +49,12 @@ class _WatingRoomView extends StatelessWidget {
           isGuide
               ? Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
-                    builder: (context) => RouteInProgressScreen(
-                      message: 'GUIA',
-                    ), // TODO CAMBIAR POR LA PANTALLA DE GUIA
+                    builder: (context) => GuideScreen(code: code),
                   ),
                 )
               : Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
-                    builder: (context) => RouteInProgressScreen(
-                      message: 'Paticipante',
-                    ), // TODO CAMBIAR POR LA PANTALLA DE PARTICIPANTE
+                    builder: (context) => ParticipantScreen(code: code),
                   ),
                 );
         }
@@ -116,20 +118,24 @@ class _WatingRoomView extends StatelessWidget {
 
                     if (state is WatingRoomLoaded) {
                       final participants = state.participants;
-                      return ListView.builder(
-                        itemCount: participants.length,
-                        itemBuilder: (context, index) {
-                          return Card(
-                            margin: EdgeInsets.symmetric(vertical: 5),
-                            child: ListTile(
-                              leading: Icon(Icons.person, color: Colors.blue),
-                              title: Text(participants[index]),
-                            ),
-                          );
-                        },
-                      );
+                      return participants.isEmpty
+                          ? Center(
+                              child:
+                                  Text('Esperando a que se unan participantes'))
+                          : ListView.builder(
+                              itemCount: participants.length,
+                              itemBuilder: (context, index) {
+                                return Card(
+                                  margin: EdgeInsets.symmetric(vertical: 5),
+                                  child: ListTile(
+                                    leading:
+                                        Icon(Icons.person, color: Colors.blue),
+                                    title: Text(participants[index]),
+                                  ),
+                                );
+                              },
+                            );
                     }
-
                     return Center(child: Text('No se encontró la sala'));
                   },
                 ),
@@ -143,33 +149,13 @@ class _WatingRoomView extends StatelessWidget {
             ? FloatingActionButton(
                 onPressed: () {
                   // Lógica para iniciar la ruta
-                  _startRoute(context);
+                  routeBloc.add(StartEvent(routeId: code));
                 },
                 child: Icon(Icons.play_arrow),
               )
             : null,
       ),
     );
-  }
-
-  // Método para iniciar la ruta
-  void _startRoute(BuildContext context) {
-    final roomRef = FirebaseFirestore.instance.collection('rutas').doc(code);
-
-    // Actualizar el estado de la ruta a "iniciado"
-    roomRef.update({'status': 'iniciado'}).then((_) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Ruta iniciada'),
-        ),
-      );
-    }).catchError((error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error al iniciar la ruta: $error'),
-        ),
-      );
-    });
   }
 }
 

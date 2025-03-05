@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "pregunta": "¿Cómo calificarías la comodidad del trayecto hasta este punto?",
+    "opciones": ["Muy incómodo", "Incómodo", "Neutral", "Cómodo", "Muy cómodo"]
+  },
+  {
+    "id": 2,
+    "pregunta": "¿Qué tan seguro te sientes en este punto del recorrido?",
+    "opciones": [
+      "Nada seguro",
+      "Poco seguro",
+      "Neutral",
+      "Seguro",
+      "Muy seguro"
+    ]
+  },
+  {
+    "id": 3,
+    "pregunta": "¿Cómo describirías la claridad de la señalización o indicaciones en este punto?",
+    "opciones": [
+      "Nada claras",
+      "Poco claras",
+      "Neutrales",
+      "Claras",
+      "Muy claras"
+    ]
+  }
+]

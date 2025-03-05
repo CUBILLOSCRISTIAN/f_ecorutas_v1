@@ -32,14 +32,25 @@ class JoinEvent extends RouteEvent {
 class FinishEvent extends RouteEvent {
   final String routeId;
   final String userId;
-  final List<Map<String, dynamic>> positions;
 
   const FinishEvent({
     required this.routeId,
     required this.userId,
-    required this.positions,
   });
 
   @override
-  List<Object> get props => [routeId, userId, positions];
+  List<Object> get props => [routeId, userId];
+}
+
+class StartEvent extends RouteEvent {
+  final String routeId;
+
+  const StartEvent({required this.routeId});
+
+  @override
+  List<Object> get props => [routeId];
+}
+
+class StartTrankingEvent extends RouteEvent {
+  const StartTrankingEvent();
 }

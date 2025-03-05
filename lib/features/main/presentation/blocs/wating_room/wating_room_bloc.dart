@@ -11,6 +11,8 @@ class WatingRoomBloc extends Bloc<WatingRoomEvent, WatingRoomState> {
   final FirebaseFirestore firestore;
   StreamSubscription? _subscription;
 
+  //! DEBO DESACOPLAR DE FIREBASE ESTE BLOC
+
   WatingRoomBloc({required this.firestore}) : super(WatingRoomInitial()) {
     on<LoadParticipantsEvent>(_onLoadParticipants);
     on<LoadParticipantsSuccess>(_onLoadParticipantsSuccess);
@@ -43,8 +45,8 @@ class WatingRoomBloc extends Bloc<WatingRoomEvent, WatingRoomState> {
       }
 
       final participants = List<Map<String, dynamic>>.from(
-        data['participantes'] ?? [],
-      ).map((participant) => participant['nombre'] as String).toList();
+        data['participants'] ?? [],
+      ).map((participant) => participant['name'] as String).toList();
 
       add(LoadParticipantsSuccess(participants));
     }, onError: (error) {
