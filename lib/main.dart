@@ -6,6 +6,7 @@ import 'package:f_ecorutas_v1/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:workmanager/workmanager.dart';
 
 @pragma(
@@ -23,10 +24,12 @@ void main() async {
   WidgetsFlutterBinding
       .ensureInitialized(); // Ensure Flutter binding is initialized
 
-  Workmanager().initialize(
-    callbackDispatcher,
-    isInDebugMode: true, // Cambia a false en producción
-  );
+  FlutterForegroundTask.initCommunicationPort();
+
+  // Workmanager().initialize(
+  //   callbackDispatcher,
+  //   isInDebugMode: true, // Cambia a false en producción
+  // );
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,

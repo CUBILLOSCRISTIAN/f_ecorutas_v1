@@ -1,10 +1,12 @@
 import 'package:dartz/dartz.dart';
 import 'package:f_ecorutas_v1/core/error/failure.dart';
+import 'package:f_ecorutas_v1/core/services/task_handler.dart';
 import 'package:f_ecorutas_v1/features/main/data/models/route_model.dart';
 import 'package:f_ecorutas_v1/features/main/data/sources/local/i_local_datasource.dart';
 import 'package:f_ecorutas_v1/features/main/data/sources/remote/i_remote_datasource.dart';
 import 'package:f_ecorutas_v1/features/main/domain/entity/route.dart';
 import 'package:f_ecorutas_v1/features/main/domain/repositories/i_route_repository.dart';
+import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:workmanager/workmanager.dart';
 
 class RouteRepositoryImpl implements IRouteRepository {
@@ -67,13 +69,10 @@ class RouteRepositoryImpl implements IRouteRepository {
   @override
   Future<Either<Failure, Unit>> startTranking() async {
     try {
-      Workmanager().registerOneOffTask(
-        'track_location_task',
-        'start_tracking',
-        constraints: Constraints(
-          networkType: NetworkType.connected, // Solo con internet
-          requiresBatteryNotLow: true, // No se ejecuta si la batería está baja
-        ),
+      await FlutterForegroundTask.startService(
+        notificationTitle: 'Seguimiento de ubicación',
+        notificationText: 'Obteniendo ubicación...',
+        callback: startCallback,
       );
       return Right(unit);
     } catch (e) {
