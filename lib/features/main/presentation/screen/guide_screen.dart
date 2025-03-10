@@ -5,6 +5,7 @@ import 'package:f_ecorutas_v1/features/main/domain/usecases/load_questions_useca
 import 'package:f_ecorutas_v1/features/main/domain/usecases/send_answer_usecase.dart';
 import 'package:f_ecorutas_v1/features/main/domain/usecases/send_question_usecase.dart';
 import 'package:f_ecorutas_v1/features/main/presentation/blocs/guide/guide_bloc.dart';
+import 'package:f_ecorutas_v1/features/main/presentation/screen/main_screen.dart';
 import 'package:f_ecorutas_v1/features/main/presentation/widgets/code_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,15 +17,19 @@ class GuideScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => GuideBloc(
-        getRoomStreamUsecase: getIt<GetRoomStreamUsecase>(),
-        sendQuestionUsecase: getIt<SendQuestionUsecase>(),
-        sendAnswerUsecase: getIt<SendAnswerUsecase>(),
-        finishRouteUsecase: getIt<FinishRouteUsecase>(),
-        loadQuestionsUsecase: getIt<LoadQuestionsUsecase>(),
-        code: code,
-      )..add(LoadGuideDataEvent()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => GuideBloc(
+            getRoomStreamUsecase: getIt<GetRoomStreamUsecase>(),
+            sendQuestionUsecase: getIt<SendQuestionUsecase>(),
+            sendAnswerUsecase: getIt<SendAnswerUsecase>(),
+            finishRouteUsecase: getIt<FinishRouteUsecase>(),
+            loadQuestionsUsecase: getIt<LoadQuestionsUsecase>(),
+            code: code,
+          )..add(LoadGuideDataEvent()),
+        ),
+      ],
       child: _GuideView(),
     );
   }
@@ -87,6 +92,13 @@ class _GuideView extends StatelessWidget {
                   ElevatedButton(
                     onPressed: () {
                       context.read<GuideBloc>().add(FinishRouteEvent());
+
+                        Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                          builder: (context) => MainScreen(),
+                        ),
+                        (Route<dynamic> route) => false,
+                        );
                     },
                     child: Text('Finalizar Ruta'),
                   ),

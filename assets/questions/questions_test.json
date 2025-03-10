@@ -1,29 +1,22 @@
 [
   {
     "id": 1,
-    "pregunta": "¿Cómo calificarías la comodidad del trayecto hasta este punto?",
-    "opciones": ["Muy incómodo", "Incómodo", "Neutral", "Cómodo", "Muy cómodo"]
+    "pregunta": "¿Para las actividades que más disfruto, los entornos que ofrece este sitio son los mejores?",
+    "opciones": ["1", "2", "3", "4", "5"]
   },
   {
     "id": 2,
-    "pregunta": "¿Qué tan seguro te sientes en este punto del recorrido?",
-    "opciones": [
-      "Nada seguro",
-      "Poco seguro",
-      "Neutral",
-      "Seguro",
-      "Muy seguro"
-    ]
+    "pregunta": "¿Disfruto visitando este sitio y su entorno más que cualquier otro sitio del campus?",
+    "opciones": ["1", "2", "3", "4", "5"]
   },
   {
     "id": 3,
-    "pregunta": "¿Cómo describirías la claridad de la señalización o indicaciones en este punto?",
-    "opciones": [
-      "Nada claras",
-      "Poco claras",
-      "Neutrales",
-      "Claras",
-      "Muy claras"
-    ]
+    "pregunta": "¿Me identifico fuertemente con este sitio del campus?",
+    "opciones": ["1", "2", "3", "4", "5"]
+  },
+  {
+    "id": 4,
+    "pregunta": "¿Siento un fuerte sentido de pertenencia a este sitio y su entorno?",
+    "opciones": ["1", "2", "3", "4", "5"]
   }
 ]

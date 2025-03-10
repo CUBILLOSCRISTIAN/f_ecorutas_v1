@@ -164,7 +164,10 @@ class _MainScreenState extends State<MainScreen> {
       },
       builder: (context, state) {
         if (state is RouteLoadingState) {
-          return Center(child: CircularProgressIndicator());
+          return Center(
+              child: CircularProgressIndicator(
+            backgroundColor: Colors.red,
+          ));
         }
         return Column(
           children: [

@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:f_ecorutas_v1/core/error/failure.dart';
+import 'package:f_ecorutas_v1/core/services/service_locator.dart';
 import 'package:f_ecorutas_v1/core/services/task_handler.dart';
 import 'package:f_ecorutas_v1/features/main/data/models/route_model.dart';
 import 'package:f_ecorutas_v1/features/main/data/sources/local/i_local_datasource.dart';
@@ -7,13 +8,14 @@ import 'package:f_ecorutas_v1/features/main/data/sources/remote/i_remote_datasou
 import 'package:f_ecorutas_v1/features/main/domain/entity/route.dart';
 import 'package:f_ecorutas_v1/features/main/domain/repositories/i_route_repository.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
-import 'package:workmanager/workmanager.dart';
 
 class RouteRepositoryImpl implements IRouteRepository {
   final IRemoteDatasource _remoteDatasource;
   final ILocalDatasource _localDatasource;
 
-  const RouteRepositoryImpl(this._remoteDatasource, this._localDatasource);
+  final List<Map<String, dynamic>> _locations = [];
+
+  RouteRepositoryImpl(this._remoteDatasource, this._localDatasource);
 
   @override
   Future<Either<Failure, Unit>> createRoute(RouteEntity entity) async {
@@ -30,12 +32,16 @@ class RouteRepositoryImpl implements IRouteRepository {
     String routeId,
     String userName,
   ) async {
-    Workmanager()
-        .cancelByUniqueName('track_location_task'); // Detiene el tracking
-    List<Map<String, dynamic>> positions =
-        _localDatasource.positions.map((e) => e.toJson()).toList();
-    print('positions: $positions');
-    return await _remoteDatasource.sentPositions(routeId, userName, positions);
+    // Detiene el tracking
+    // List<Map<String, dynamic>> positions =
+    //     _localDatasource.positions.map((e) => e.toJson()).toList();
+    // print('positions: $positions');
+
+    await FlutterForegroundTask.stopService();
+
+    print('finishRoute: $routeId, $userName, $_locations');
+
+    return await _remoteDatasource.sentPositions(routeId, userName, _locations);
   }
 
   @override
@@ -45,7 +51,7 @@ class RouteRepositoryImpl implements IRouteRepository {
 
   @override
   Future<Either<Failure, Unit>> startRoute(String routeId) async {
-    _localDatasource.startTracking();
+    // _localDatasource.startTracking();
     return await _remoteDatasource.startRoute(routeId);
   }
 
@@ -69,6 +75,7 @@ class RouteRepositoryImpl implements IRouteRepository {
   @override
   Future<Either<Failure, Unit>> startTranking() async {
     try {
+      print('startTranking');
       await FlutterForegroundTask.startService(
         notificationTitle: 'Seguimiento de ubicación',
         notificationText: 'Obteniendo ubicación...',
@@ -78,5 +85,10 @@ class RouteRepositoryImpl implements IRouteRepository {
     } catch (e) {
       return Left(ErrorFailure());
     }
+  }
+
+  @override
+  void saveLocation(Map<String, dynamic> location) {
+    _locations.add(location);
   }
 }

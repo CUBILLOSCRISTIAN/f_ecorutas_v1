@@ -1,25 +1,76 @@
 import 'package:f_ecorutas_v1/core/services/service_locator.dart';
+import 'package:f_ecorutas_v1/features/main/domain/repositories/i_route_repository.dart';
 import 'package:f_ecorutas_v1/features/main/domain/usecases/get_room_stream_usecase.dart';
 import 'package:f_ecorutas_v1/features/main/domain/usecases/send_answer_usecase.dart';
+import 'package:f_ecorutas_v1/features/main/presentation/blocs/foreground/foreground_bloc.dart';
+import 'package:f_ecorutas_v1/features/main/presentation/blocs/foreground/foreground_event.dart';
+
 import 'package:f_ecorutas_v1/features/main/presentation/blocs/participant/participant_bloc.dart';
 import 'package:f_ecorutas_v1/features/main/presentation/blocs/route/route_bloc.dart';
+import 'package:f_ecorutas_v1/features/main/presentation/screen/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 
-class ParticipantScreen extends StatelessWidget {
+class ParticipantScreen extends StatefulWidget {
   final String code;
 
   const ParticipantScreen({super.key, required this.code});
 
   @override
+  State<ParticipantScreen> createState() => _ParticipantScreenState();
+}
+
+class _ParticipantScreenState extends State<ParticipantScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _startListeningToData();
+  }
+
+  void _startListeningToData() {
+    // Añadir un callback para recibir datos enviados desde el TaskHandler
+    FlutterForegroundTask.addTaskDataCallback(_onReceiveTaskData);
+  }
+
+  void _onReceiveTaskData(dynamic data) {
+    print('Data received: $data');
+    if (data is Map<String, dynamic>) {
+      // Pasar los datos al Repository
+
+      getIt<IRouteRepository>().saveLocation(data);
+    }
+  }
+
+  @override
+  void dispose() {
+    // Remover el callback cuando el widget se destruya
+    FlutterForegroundTask.removeTaskDataCallback(_onReceiveTaskData);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => ParticipantBloc(
-        getRoomStreamUsecase: getIt<GetRoomStreamUsecase>(),
-        sendAnswerUsecase: getIt<SendAnswerUsecase>(),
-        code: code,
-      )..add(LoadParticipantDataEvent()),
-      child: _ParticipantView(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => ParticipantBloc(
+            getRoomStreamUsecase: getIt<GetRoomStreamUsecase>(),
+            sendAnswerUsecase: getIt<SendAnswerUsecase>(),
+            code: widget.code,
+          )..add(LoadParticipantDataEvent()),
+        ),
+        BlocProvider(
+          create: (context) => ForegroundBloc(),
+        ),
+      ],
+      child: BlocListener<ParticipantBloc, ParticipantState>(
+        listenWhen: (previous, current) => current is ParticipantLoaded,
+        listener: (context, state) {
+          context.read<ForegroundBloc>().add(StartTracking());
+        },
+        child: _ParticipantView(),
+      ),
     );
   }
 }
@@ -47,18 +98,16 @@ class _ParticipantView extends StatelessWidget {
               RouteBloc routeBloc = getIt<RouteBloc>();
               routeBloc.add(
                   FinishEvent(routeId: state.code, userId: state.userName));
-              return Center(
-                child: Text(
-                  'La ruta ha finalizado. ¡Gracias por participar!',
-                  style: TextStyle(fontSize: 24),
+
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                  builder: (context) => MainScreen(),
                 ),
+                (Route<dynamic> route) => false,
               );
             }
 
             if (state is ParticipantLoaded) {
-              RouteBloc routeBloc = getIt<RouteBloc>();
-              routeBloc.add(StartTrankingEvent());
-
               return state.currentQuestion == '' || state.hasAnswered
                   ? Padding(
                       padding: const EdgeInsets.all(16.0),
@@ -71,7 +120,7 @@ class _ParticipantView extends StatelessWidget {
                       child: Column(
                         children: [
                           Text(
-                            'Pregunta actual:',
+                            'Pregunta:',
                             style: TextStyle(
                                 fontSize: 24, fontWeight: FontWeight.bold),
                           ),
@@ -81,22 +130,50 @@ class _ParticipantView extends StatelessWidget {
                             style: TextStyle(fontSize: 18),
                           ),
                           SizedBox(height: 20),
-                          Column(
-                            children: state.currentQuestion['opciones']
-                                .map<Widget>(
-                                  (opcion) => RadioListTile(
-                                    title: Text(opcion),
-                                    value: state.currentQuestion['opciones']
-                                        .indexOf(opcion),
-                                    groupValue: state.selectedOption,
-                                    onChanged: (value) {
-                                      context
-                                          .read<ParticipantBloc>()
-                                          .add(SelectOptionEvent(value!));
-                                    },
-                                  ),
-                                )
-                                .toList(),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('Nada'),
+                                Text('Muchísimo'),
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            height: 100,
+                            width: double.infinity,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: state.currentQuestion['opciones']
+                                  .map<Widget>(
+                                    (opcion) => Expanded(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Radio(
+                                            value: state
+                                                .currentQuestion['opciones']
+                                                .indexOf(opcion),
+                                            groupValue: state.selectedOption,
+                                            onChanged: (value) {
+                                              context
+                                                  .read<ParticipantBloc>()
+                                                  .add(SelectOptionEvent(
+                                                      value!));
+                                            },
+                                          ),
+                                          SizedBox(
+                                              height:
+                                                  8), // Espacio entre el Radio y el texto
+                                          Text(opcion),
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                  .toList(),
+                            ),
                           ),
                           SizedBox(height: 20),
                           ElevatedButton(

@@ -32,3 +32,7 @@ class SelectOptionEvent extends ParticipantEvent {
   @override
   List<Object> get props => [option];
 }
+
+class CleanEvent extends ParticipantEvent {
+  const CleanEvent();
+}

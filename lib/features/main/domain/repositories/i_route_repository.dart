@@ -15,4 +15,6 @@ abstract interface class IRouteRepository {
       String code, String answer, String question);
 
   Future<Either<Failure, Unit>> startTranking();
+
+  void saveLocation(Map<String, dynamic> location);
 }

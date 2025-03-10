@@ -27,6 +27,11 @@ class ParticipantBloc extends Bloc<ParticipantEvent, ParticipantState> {
     on<LoadParticipantDataEvent>(_onLoadParticipantData);
     on<SendAnswerEvent>(_onSendAnswer);
     on<SelectOptionEvent>(_onSelectOption);
+    on<CleanEvent>(_onClean);
+  }
+
+  void _onClean(CleanEvent event, Emitter<ParticipantState> emit) {
+    emit(ParticipantInitial());
   }
 
   Future<void> _onSelectOption(

@@ -45,7 +45,6 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
 
   void _onStartRoute(StartEvent event, Emitter<RouteState> emit) async {
     _emitLoadingState(emit);
-
     await startRouteUsecase(event.routeId);
   }
 
@@ -63,6 +62,9 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
 
   void _onFinishRoute(FinishEvent event, Emitter<RouteState> emit) async {
     _emitLoadingState(emit);
+
+    
+
     final result = await sentPositionsUsecase(event.routeId, event.userId);
     result.fold(
       (failure) => emit(RouteErrorState(message: failure.message)),

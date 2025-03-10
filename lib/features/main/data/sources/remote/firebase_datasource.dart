@@ -139,11 +139,6 @@ class FirebaseDataSource implements IRemoteDatasource {
   }
 
   Future<Map<String, dynamic>> _getCurrentLocation() async {
-    // obtención de la geolocalización
-    // Aquí deberías usar un paquete como 'geolocator' para obtener la ubicación actual
-    // Asegúrate de agregar 'geolocator' a tu pubspec.yaml
-    // Ejemplo:
-    // geolocator: ^7.7.0
 
     Position position = await Geolocator.getCurrentPosition();
 
