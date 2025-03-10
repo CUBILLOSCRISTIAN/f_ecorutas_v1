@@ -2,6 +2,7 @@ import 'package:f_ecorutas_v1/core/services/service_locator.dart';
 import 'package:f_ecorutas_v1/features/main/presentation/blocs/route/route_bloc.dart';
 import 'package:f_ecorutas_v1/features/main/presentation/blocs/wating_room/wating_room_bloc.dart';
 import 'package:f_ecorutas_v1/features/main/presentation/screen/guide_screen.dart';
+import 'package:f_ecorutas_v1/features/main/presentation/screen/main_screen.dart';
 import 'package:f_ecorutas_v1/features/main/presentation/screen/participant_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -47,15 +48,17 @@ class _WatingRoomView extends StatelessWidget {
           // Redirigir a la nueva pantalla cuando la ruta se inicie
 
           isGuide
-              ? Navigator.of(context).pushReplacement(
+              ? Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(
                     builder: (context) => GuideScreen(code: code),
                   ),
+                  (route) => false,
                 )
-              : Navigator.of(context).pushReplacement(
+              : Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(
                     builder: (context) => ParticipantScreen(code: code),
                   ),
+                  (route) => false,
                 );
         }
       },

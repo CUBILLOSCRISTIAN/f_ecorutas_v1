@@ -4,7 +4,6 @@ import 'package:f_ecorutas_v1/features/main/domain/usecases/get_room_stream_usec
 import 'package:f_ecorutas_v1/features/main/domain/usecases/send_answer_usecase.dart';
 import 'package:f_ecorutas_v1/features/main/presentation/blocs/foreground/foreground_bloc.dart';
 import 'package:f_ecorutas_v1/features/main/presentation/blocs/foreground/foreground_event.dart';
-
 import 'package:f_ecorutas_v1/features/main/presentation/blocs/participant/participant_bloc.dart';
 import 'package:f_ecorutas_v1/features/main/presentation/blocs/route/route_bloc.dart';
 import 'package:f_ecorutas_v1/features/main/presentation/screen/main_screen.dart';
@@ -98,12 +97,22 @@ class _ParticipantView extends StatelessWidget {
               RouteBloc routeBloc = getIt<RouteBloc>();
               routeBloc.add(
                   FinishEvent(routeId: state.code, userId: state.userName));
-
-              Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(
-                  builder: (context) => MainScreen(),
-                ),
-                (Route<dynamic> route) => false,
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Center(child: Text('Ruta finalizada')),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                          builder: (context) => MainScreen(),
+                        ),
+                        (Route<dynamic> route) => false,
+                      );
+                    },
+                    child: Text('Volver'),
+                  ),
+                ],
               );
             }
 

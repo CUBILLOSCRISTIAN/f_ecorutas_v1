@@ -30,3 +30,5 @@ class WatingRoomError extends WatingRoomState {
 }
 
 class RouteStartedState extends WatingRoomState {}
+
+class RouteFinishedState extends WatingRoomState {}

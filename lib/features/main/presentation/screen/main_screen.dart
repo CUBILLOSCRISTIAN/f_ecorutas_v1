@@ -117,6 +117,7 @@ class _MainScreenState extends State<MainScreen> {
             SizedBox(height: 10),
             ElevatedButton(
               onPressed: () {
+                setState(() {});
                 // Funcion de generar codigo
                 var code = _generateCode();
                 debugPrint('Código generado: $code');

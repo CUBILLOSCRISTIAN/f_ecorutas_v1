@@ -63,23 +63,20 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
   void _onFinishRoute(FinishEvent event, Emitter<RouteState> emit) async {
     _emitLoadingState(emit);
 
-    
-
     final result = await sentPositionsUsecase(event.routeId, event.userId);
     result.fold(
       (failure) => emit(RouteErrorState(message: failure.message)),
-      (success) => emit(OperationSuccessState(
-        message: 'Route finished successfully',
-        code: event.routeId,
-      )),
+      (success) => emit(RouteInitial()),
     );
+    emit(RouteInitial());
   }
 
   void _emitLoadingState(Emitter<RouteState> emit) {
     emit(RouteLoadingState());
   }
 
-  void _onStarTranking(StartTrankingEvent event, Emitter<RouteState> emit) async {
+  void _onStarTranking(
+      StartTrankingEvent event, Emitter<RouteState> emit) async {
     await startTraingUsecase();
   }
 }
