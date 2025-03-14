@@ -13,30 +13,33 @@ class ParticipantLoading extends ParticipantState {}
 
 class ParticipantLoaded extends ParticipantState {
   final dynamic currentQuestion;
-  final int? selectedOption;
+
   final bool hasAnswered;
+
+  final Map<int, int>? selectedOptions;
 
   const ParticipantLoaded(
     this.currentQuestion, {
-    this.selectedOption = -1,
     this.hasAnswered = false,
+    this.selectedOptions = const {},
   });
 
   ParticipantLoaded copyWith({
     dynamic currentQuestion,
     int? selectedOption,
     bool? hasAnswered,
+    Map<int, int>? selectedOptions,
   }) {
     return ParticipantLoaded(
       currentQuestion ?? this.currentQuestion,
       hasAnswered: hasAnswered ?? this.hasAnswered,
-      selectedOption: selectedOption ?? this.selectedOption,
+      selectedOptions: selectedOptions ?? this.selectedOptions,
     );
   }
 
   @override
   List<Object> get props =>
-      [currentQuestion, selectedOption ?? -1, hasAnswered];
+      [hasAnswered, selectedOptions ?? {}, currentQuestion];
 }
 
 class ParticipantRouteFinished extends ParticipantState {

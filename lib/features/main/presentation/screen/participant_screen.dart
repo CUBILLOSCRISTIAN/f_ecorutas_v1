@@ -90,7 +90,23 @@ class _ParticipantView extends StatelessWidget {
             }
 
             if (state is ParticipantError) {
-              return Center(child: Text(state.message));
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(state.message),
+                  ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                            builder: (context) => MainScreen(),
+                          ),
+                          (Route<dynamic> route) => false,
+                        );
+                      },
+                      child: Text('Volver')),
+                ],
+              );
             }
 
             if (state is ParticipantRouteFinished) {
@@ -126,79 +142,97 @@ class _ParticipantView extends StatelessWidget {
                     )
                   : Padding(
                       padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        children: [
-                          Text(
-                            'Pregunta:',
-                            style: TextStyle(
-                                fontSize: 24, fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(height: 20),
-                          Text(
-                            state.currentQuestion['pregunta'],
-                            style: TextStyle(fontSize: 18),
-                          ),
-                          SizedBox(height: 20),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text('Nada'),
-                                Text('Muchísimo'),
-                              ],
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            Text(
+                              'Preguntas:',
+                              style: TextStyle(
+                                  fontSize: 24, fontWeight: FontWeight.bold),
                             ),
-                          ),
-                          SizedBox(
-                            height: 100,
-                            width: double.infinity,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: state.currentQuestion['opciones']
-                                  .map<Widget>(
-                                    (opcion) => Expanded(
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Radio(
-                                            value: state
-                                                .currentQuestion['opciones']
-                                                .indexOf(opcion),
-                                            groupValue: state.selectedOption,
-                                            onChanged: (value) {
-                                              context
-                                                  .read<ParticipantBloc>()
-                                                  .add(SelectOptionEvent(
-                                                      value!));
-                                            },
-                                          ),
-                                          SizedBox(
-                                              height:
-                                                  8), // Espacio entre el Radio y el texto
-                                          Text(opcion),
-                                        ],
+                            SizedBox(height: 20),
+                            ...state.currentQuestion.map<Widget>((question) {
+                              final questionId = question[
+                                  'id']; // Identificador único de la pregunta
+                              final selectedOption = state
+                                      .selectedOptions?[questionId] ??
+                                  -1; // Opción seleccionada (o -1 si no hay selección)
+
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    question['pregunta'],
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                  SizedBox(height: 20),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text('Nada'),
+                                        Text('Muchísimo'),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 100,
+                                    width: double.infinity,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: question['opciones']
+                                          .map<Widget>(
+                                            (opcion) => Expanded(
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Radio(
+                                                    value: question['opciones']
+                                                        .indexOf(opcion),
+                                                    groupValue: selectedOption,
+                                                    onChanged: (value) {
+                                                      context
+                                                          .read<
+                                                              ParticipantBloc>()
+                                                          .add(
+                                                            SelectOptionEvent(
+                                                              questionId, // Identificador de la pregunta
+                                                              value!, // Opción seleccionada
+                                                            ),
+                                                          );
+                                                    },
+                                                  ),
+                                                  SizedBox(height: 8),
+                                                  Text(opcion),
+                                                ],
+                                              ),
+                                            ),
+                                          )
+                                          .toList(),
+                                    ),
+                                  ),
+                                  SizedBox(height: 20),
+                                ],
+                              );
+                            }).toList(),
+                            SizedBox(height: 20),
+                            ElevatedButton(
+                              onPressed: () {
+                                context.read<ParticipantBloc>().add(
+                                      SendAnswerEvent(
+                                        answers: state.selectedOptions ?? {},
                                       ),
-                                    ),
-                                  )
-                                  .toList(),
+                                    );
+                              },
+                              child: Text('Responder'),
                             ),
-                          ),
-                          SizedBox(height: 20),
-                          ElevatedButton(
-                            onPressed: () {
-                              context.read<ParticipantBloc>().add(
-                                    SendAnswerEvent(
-                                      answer: state.currentQuestion['opciones']
-                                          [state.selectedOption],
-                                      question:
-                                          state.currentQuestion['pregunta'],
-                                    ),
-                                  );
-                            },
-                            child: Text('Responder'),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     );
             }

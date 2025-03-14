@@ -3,6 +3,7 @@ import 'package:dartz/dartz.dart';
 import 'package:f_ecorutas_v1/core/error/failure.dart';
 import 'package:f_ecorutas_v1/features/main/data/models/route_model.dart';
 import 'package:f_ecorutas_v1/features/main/data/sources/remote/i_remote_datasource.dart';
+import 'package:f_ecorutas_v1/features/main/domain/entity/question.dart';
 import 'package:geolocator/geolocator.dart';
 
 class FirebaseDataSource implements IRemoteDatasource {
@@ -79,7 +80,7 @@ class FirebaseDataSource implements IRemoteDatasource {
 
   @override
   Future<Either<Failure, Unit>> sendAnswer(
-      String code, String answer, String question) async {
+      String code, Map<int, int> answer) async {
     try {
       final docRef = _firestore.collection('rutas').doc(code);
 
@@ -90,24 +91,14 @@ class FirebaseDataSource implements IRemoteDatasource {
           throw Exception("No se encontró la ruta");
         }
 
-        final data = snapshot.data() as Map<String, dynamic>;
-        final List<dynamic> historial =
-            List.from(data['historial_preguntas'] ?? []);
-
-        // Buscar la pregunta en el historial
-        final index =
-            historial.lastIndexWhere((q) => q['pregunta'] == question);
-        if (index == -1) {
-          throw Exception("Pregunta no encontrada en el historial");
-        }
-
-        // Agregar la respuesta dentro de la pregunta correspondiente
-        historial[index]['respuestas'] =
-            List.from(historial[index]['respuestas'])..add(answer);
+// Convertir el mapa de respuestas (claves int -> String)
+        final Map<String, int> answerWithStringKeys = answer.map(
+          (key, value) => MapEntry(key.toString(), value),
+        );
 
         // Actualizar Firestore con el nuevo historial
         transaction.update(docRef, {
-          'historial_preguntas': historial,
+          'answers': FieldValue.arrayUnion([answerWithStringKeys])
         });
       });
 
@@ -119,13 +110,17 @@ class FirebaseDataSource implements IRemoteDatasource {
 
   @override
   Future<Either<Failure, Unit>> sendQuestion(
-      String code, Map<String, dynamic> question) async {
+      String code, List<Map<String, dynamic>> question) async {
     try {
+      await _firestore.collection('rutas').doc(code).update({
+        'pregunta_actual': '',
+      });
+
       await _firestore.collection('rutas').doc(code).update({
         'pregunta_actual': question,
         'historial_preguntas': FieldValue.arrayUnion([
           {
-            'pregunta': question['pregunta'],
+            'pregunta': question,
             'respuestas': [],
             'geolocalizacion': await _getCurrentLocation(),
           }
@@ -139,7 +134,6 @@ class FirebaseDataSource implements IRemoteDatasource {
   }
 
   Future<Map<String, dynamic>> _getCurrentLocation() async {
-
     Position position = await Geolocator.getCurrentPosition();
 
     return {

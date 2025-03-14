@@ -14,7 +14,7 @@ class GuideLoading extends GuideState {}
 class GuideLoaded extends GuideState {
   final List<Map<String, dynamic>> participants;
   final List<Question> questions;
-  final int? selectedIndex;
+  final String? selectedItem;
 
   final String? selectedCategory;
   final String? selectedSubCategory;
@@ -33,7 +33,7 @@ class GuideLoaded extends GuideState {
   GuideLoaded(
     this.participants,
     this.questions, {
-    this.selectedIndex = -1,
+    this.selectedItem = "Ebano",
     this.selectedCategory = 'Categoría 1',
     this.selectedSubCategory = 'Subcategoría 1',
   });
@@ -41,23 +41,40 @@ class GuideLoaded extends GuideState {
   GuideLoaded copyWith({
     List<Map<String, dynamic>>? participants,
     List<Question>? questions,
-    int? selectedIndex,
+    String? selectedItem,
   }) {
     return GuideLoaded(
       participants ?? this.participants,
       questions ?? this.questions,
-      selectedIndex: selectedIndex ?? this.selectedIndex,
+      selectedItem: selectedItem ?? this.selectedItem,
     );
   }
 
   @override
-  List<Object> get props => [participants, questions, selectedIndex ?? -1];
+  List<Object> get props => [participants, questions, selectedItem ?? -1];
 }
 
 class GuideError extends GuideState {
   final String message;
 
   const GuideError(this.message);
+
+  @override
+  List<Object> get props => [message];
+}
+
+class ItemSelectedState extends GuideState {
+  final String selectedItem;
+  const ItemSelectedState(this.selectedItem);
+
+  @override
+  List<Object> get props => [selectedItem];
+}
+
+class GuideQuestionSent extends GuideState {
+  final String message;
+
+  const GuideQuestionSent(this.message);
 
   @override
   List<Object> get props => [message];

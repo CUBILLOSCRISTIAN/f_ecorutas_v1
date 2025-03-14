@@ -12,25 +12,24 @@ class LoadParticipantDataEvent extends ParticipantEvent {
 }
 
 class SendAnswerEvent extends ParticipantEvent {
-  final String answer;
-  final String question;
+  final Map<int, int> answers;
 
   const SendAnswerEvent({
-    required this.answer,
-    required this.question,
+    required this.answers,
   });
 
   @override
-  List<Object> get props => [answer, question];
+  List<Object> get props => [answers];
 }
 
 class SelectOptionEvent extends ParticipantEvent {
-  final int option;
+  final int questionId; // Identificador de la pregunta
+  final int selectedOption; // Opción seleccionada
 
-  const SelectOptionEvent(this.option);
+  const SelectOptionEvent(this.questionId, this.selectedOption);
 
   @override
-  List<Object> get props => [option];
+  List<Object> get props => [questionId, selectedOption];
 }
 
 class CleanEvent extends ParticipantEvent {

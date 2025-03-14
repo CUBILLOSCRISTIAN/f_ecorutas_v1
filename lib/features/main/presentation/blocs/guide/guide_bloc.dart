@@ -34,16 +34,20 @@ class GuideBloc extends Bloc<GuideEvent, GuideState> {
     on<SendQuestionEvent>(_onSendQuestion);
     on<FinishRouteEvent>(_onFinishRoute);
     on<LoadQuestionEvent>(_onLoadQuestion);
-    on<SelectQuestionEvent>(_onSelectQuestion);
+    // on<SelectQuestionEvent>(_onSelectQuestion);
+    on<SelectItemEvent>((event, emit) {
+      _onSelectQuestion(event, emit);
+    });
   }
 
   Future<void> _onSelectQuestion(
-    SelectQuestionEvent event,
+    SelectItemEvent event,
     Emitter<GuideState> emit,
   ) async {
     final currentState = state;
     if (currentState is GuideLoaded) {
-      emit(currentState.copyWith(selectedIndex: event.selectedIndex));
+      print('Seleccionando pregunta ${event.selectedItem}');
+      emit(currentState.copyWith(selectedItem: event.selectedItem));
     }
   }
 
@@ -100,7 +104,12 @@ class GuideBloc extends Bloc<GuideEvent, GuideState> {
     SendQuestionEvent event,
     Emitter<GuideState> emit,
   ) async {
-    var result = await sendQuestionUsecase(code, event.question);
+    var result = await sendQuestionUsecase(code, event.questions);
+
+    result.fold(
+      (fail) => emit(GuideError('Error al enviar')),
+      (right) => emit(GuideQuestionSent('Pregunta enviada')),
+    );
 
     // result.fold((failure) => emit(GuideError('Error al enviar')), ()=>)
   }

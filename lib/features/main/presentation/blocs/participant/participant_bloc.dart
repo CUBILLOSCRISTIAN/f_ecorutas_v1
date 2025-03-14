@@ -15,7 +15,6 @@ class ParticipantBloc extends Bloc<ParticipantEvent, ParticipantState> {
   StreamSubscription? _subscription;
 
   bool isAnswered = false;
-  String _previousQuestion = '';
 
   ParticipantBloc({
     required this.code,
@@ -39,7 +38,12 @@ class ParticipantBloc extends Bloc<ParticipantEvent, ParticipantState> {
     Emitter<ParticipantState> emit,
   ) async {
     if (state is ParticipantLoaded) {
-      emit((state as ParticipantLoaded).copyWith(selectedOption: event.option));
+      final updatedOptions = Map<int, int>.from(
+          (state as ParticipantLoaded).selectedOptions ?? {});
+      updatedOptions[event.questionId] =
+          event.selectedOption; // Actualizar la selección
+      emit((state as ParticipantLoaded)
+          .copyWith(selectedOptions: updatedOptions));
     }
   }
 
@@ -69,12 +73,6 @@ class ParticipantBloc extends Bloc<ParticipantEvent, ParticipantState> {
             final currentQuestion = data['pregunta_actual'] ?? '';
             final status = data['status'] ?? 'esperando';
 
-            if (currentQuestion != '' &&
-                currentQuestion['pregunta'] != _previousQuestion) {
-              _previousQuestion = currentQuestion['pregunta'];
-              isAnswered = false;
-            }
-
             if (status == 'finalizado') {
               return ParticipantRouteFinished(code: code, userName: '');
             } else {
@@ -84,14 +82,16 @@ class ParticipantBloc extends Bloc<ParticipantEvent, ParticipantState> {
                 return ParticipantLoaded(
                   currentQuestion,
                   hasAnswered: isAnswered,
-                  selectedOption: -1, // Reiniciar la opción seleccionada
+                  selectedOptions: {}, // Reiniciar la opción seleccionada
                 );
               }
             }
             return state;
           },
-          onError: (error, stackTrace) =>
-              ParticipantError('Error al cargar los datos: $error'),
+          onError: (error, stackTrace) {
+            print('Error al cargar los datos: $error');
+            return ParticipantError('Error al cargar los datos: $error');
+          },
         );
       },
     );
@@ -103,11 +103,11 @@ class ParticipantBloc extends Bloc<ParticipantEvent, ParticipantState> {
   ) async {
     if (state is ParticipantLoaded) {
       final currentState = state as ParticipantLoaded;
-      final result =
-          await _sendAnswerUsecase(code, event.answer, event.question);
+      final result = await _sendAnswerUsecase(code, event.answers);
       await result.fold(
         (error) async {
-          emit(ParticipantError('Error al enviar la respuesta: $error'));
+          emit(ParticipantError(
+              'Error al enviar la respuesta: ${error.message}'));
         },
         (_) async {
           isAnswered = true;

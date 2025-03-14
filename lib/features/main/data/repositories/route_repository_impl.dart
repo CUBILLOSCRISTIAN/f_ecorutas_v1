@@ -5,6 +5,7 @@ import 'package:f_ecorutas_v1/core/services/task_handler.dart';
 import 'package:f_ecorutas_v1/features/main/data/models/route_model.dart';
 import 'package:f_ecorutas_v1/features/main/data/sources/local/i_local_datasource.dart';
 import 'package:f_ecorutas_v1/features/main/data/sources/remote/i_remote_datasource.dart';
+import 'package:f_ecorutas_v1/features/main/domain/entity/question.dart';
 import 'package:f_ecorutas_v1/features/main/domain/entity/route.dart';
 import 'package:f_ecorutas_v1/features/main/domain/repositories/i_route_repository.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
@@ -61,15 +62,15 @@ class RouteRepositoryImpl implements IRouteRepository {
   }
 
   @override
-  Future<Either<Failure, Unit>> sendAnswer(
-      String code, String answer, String question) {
-    return _remoteDatasource.sendAnswer(code, answer, question);
+  Future<Either<Failure, Unit>> sendAnswer(String code, Map<int, int> answer) {
+    return _remoteDatasource.sendAnswer(code, answer);
   }
 
   @override
   Future<Either<Failure, Unit>> sendQuestion(
-      String code, Map<String, dynamic> question) {
-    return _remoteDatasource.sendQuestion(code, question);
+      String code, List<Question> question) {
+    var questionTransform = question.map((e) => e.toJson()).toList();
+    return _remoteDatasource.sendQuestion(code, questionTransform);
   }
 
   @override

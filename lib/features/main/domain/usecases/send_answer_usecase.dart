@@ -7,8 +7,7 @@ class SendAnswerUsecase {
 
   SendAnswerUsecase(this._repository);
 
-  Future<Either<Failure, Unit>> call(
-      String code, String answer, String question) async {
-    return await _repository.sendAnswer(code, answer, question);
+  Future<Either<Failure, Unit>> call(String code, Map<int, int> answer) async {
+    return await _repository.sendAnswer(code, answer);
   }
 }

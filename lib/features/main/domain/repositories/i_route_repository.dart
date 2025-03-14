@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:f_ecorutas_v1/core/error/failure.dart';
+import 'package:f_ecorutas_v1/features/main/domain/entity/question.dart';
 import 'package:f_ecorutas_v1/features/main/domain/entity/route.dart';
 
 abstract interface class IRouteRepository {
@@ -10,9 +11,8 @@ abstract interface class IRouteRepository {
 
   Future<Either<Failure, Stream<dynamic>>> getRoomStream(String code);
   Future<Either<Failure, Unit>> sendQuestion(
-      String code, Map<String, dynamic> question);
-  Future<Either<Failure, Unit>> sendAnswer(
-      String code, String answer, String question);
+      String code, List<Question> question);
+  Future<Either<Failure, Unit>> sendAnswer(String code, Map<int, int> answer);
 
   Future<Either<Failure, Unit>> startTranking();
 

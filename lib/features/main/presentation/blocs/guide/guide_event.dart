@@ -12,12 +12,12 @@ class LoadGuideDataEvent extends GuideEvent {
 }
 
 class SendQuestionEvent extends GuideEvent {
-  final Map<String, dynamic> question;
+  final List<Question> questions;
 
-  const SendQuestionEvent(this.question);
+  const SendQuestionEvent(this.questions);
 
   @override
-  List<Object> get props => [question];
+  List<Object> get props => [questions];
 }
 
 class FinishRouteEvent extends GuideEvent {
@@ -39,10 +39,18 @@ class LoadQuestionEvent extends GuideEvent {
 }
 
 class SelectQuestionEvent extends GuideEvent {
-  final int selectedIndex;
+  final String selectedItem;
 
-  const SelectQuestionEvent(this.selectedIndex);
+  const SelectQuestionEvent(this.selectedItem);
 
   @override
-  List<Object> get props => [selectedIndex];
+  List<Object> get props => [selectedItem];
+}
+
+class SelectItemEvent extends GuideEvent {
+  final String selectedItem;
+  const SelectItemEvent(this.selectedItem);
+
+  @override
+  List<Object> get props => [selectedItem];
 }

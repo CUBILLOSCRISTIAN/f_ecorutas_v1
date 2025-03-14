@@ -1,11 +1,11 @@
 import 'package:f_ecorutas_v1/core/services/service_locator.dart';
+import 'package:f_ecorutas_v1/features/main/domain/entity/question.dart';
 import 'package:f_ecorutas_v1/features/main/domain/usecases/finish_route_usecase.dart';
 import 'package:f_ecorutas_v1/features/main/domain/usecases/get_room_stream_usecase.dart';
 import 'package:f_ecorutas_v1/features/main/domain/usecases/load_questions_usecase.dart';
 import 'package:f_ecorutas_v1/features/main/domain/usecases/send_answer_usecase.dart';
 import 'package:f_ecorutas_v1/features/main/domain/usecases/send_question_usecase.dart';
 import 'package:f_ecorutas_v1/features/main/presentation/blocs/guide/guide_bloc.dart';
-import 'package:f_ecorutas_v1/features/main/presentation/blocs/route/route_bloc.dart';
 import 'package:f_ecorutas_v1/features/main/presentation/screen/main_screen.dart';
 import 'package:f_ecorutas_v1/features/main/presentation/widgets/code_card.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +31,27 @@ class GuideScreen extends StatelessWidget {
           )..add(LoadGuideDataEvent()),
         ),
       ],
-      child: _GuideView(),
+      child: BlocListener<GuideBloc, GuideState>(
+        listener: (context, state) {
+          if (state is GuideError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+              ),
+            );
+          }
+
+          if (state is GuideQuestionSent) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Preguntas enviadas'),
+              ),
+            );
+            context.read<GuideBloc>().add(LoadGuideDataEvent());
+          }
+        },
+        child: _GuideView(),
+      ),
     );
   }
 }
@@ -62,43 +82,58 @@ class _GuideView extends StatelessWidget {
                     code: context.read<GuideBloc>().code,
                   ),
                   SizedBox(height: 20),
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: state.questions.length,
-                      itemBuilder: (context, index) {
-                        final question = state.questions[index];
-                        return RadioListTile(
-                          title: Text(question.question),
-                          value: index,
-                          groupValue: state.selectedIndex,
-                          onChanged: (value) {
-                            context
-                                .read<GuideBloc>()
-                                .add(SelectQuestionEvent(value!));
-                          },
-                        );
-                      },
-                    ),
+                  // Expanded(
+                  //   child: ListView.builder(
+                  //     itemCount: state.questions.length,
+                  //     itemBuilder: (context, index) {
+                  //       final question = state.questions[index];
+                  //       return RadioListTile(
+                  //         title: Text(question.question),
+                  //         value: index,
+                  //         groupValue: state.selectedIndex,
+                  //         onChanged: (value) {
+                  //           context
+                  //               .read<GuideBloc>()
+                  //               .add(SelectQuestionEvent(value!));
+                  //         },
+                  //       );
+                  //     },
+                  //   ),
+                  // ),
+                  // SizedBox(height: 20),
+
+                  DropdownButton(
+                    value: state.selectedItem,
+                    items: [
+                      DropdownMenuItem(value: 'Ebano', child: Text('Ebano')),
+                      DropdownMenuItem(
+                          value: 'Balsamo de Tolú',
+                          child: Text('Balsamo de Tolú')),
+                      DropdownMenuItem(
+                          value: 'Tamarindo', child: Text('Tamarindo')),
+                      DropdownMenuItem(
+                          value: 'Guayacá bola', child: Text('Guayacá bola')),
+                      DropdownMenuItem(
+                          value: 'Indio encuero', child: Text('Indio encuero')),
+                      DropdownMenuItem(value: 'Bonga', child: Text('Bonga')),
+                      DropdownMenuItem(
+                          value: 'Caracolí', child: Text('Caracolí')),
+                      DropdownMenuItem(value: 'Olivo', child: Text('Olivo')),
+                    ],
+                    onChanged: (value) {
+                      context
+                          .read<GuideBloc>()
+                          .add(SelectItemEvent(value.toString()));
+                    },
                   ),
-                  SizedBox(height: 20),
-                  DropdownButton<String>(
-                    value: state.selectedCategory,
-                    onChanged: (String? newValue) {},
-                    items: state.categories
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  ),
-                  SizedBox(height: 20),
+
                   ElevatedButton(
                     onPressed: () {
-                      context.read<GuideBloc>().add(SendQuestionEvent(
-                          state.questions[state.selectedIndex!].toJson()));
+                      context
+                          .read<GuideBloc>()
+                          .add(SendQuestionEvent(state.questions));
                     },
-                    child: Text('Enviar Pregunta'),
+                    child: Text('Enviar Preguntas'),
                   ),
                   SizedBox(height: 10),
                   ElevatedButton(
