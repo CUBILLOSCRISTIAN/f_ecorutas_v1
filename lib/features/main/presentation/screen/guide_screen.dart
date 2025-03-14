@@ -1,5 +1,4 @@
 import 'package:f_ecorutas_v1/core/services/service_locator.dart';
-import 'package:f_ecorutas_v1/features/main/domain/entity/question.dart';
 import 'package:f_ecorutas_v1/features/main/domain/usecases/finish_route_usecase.dart';
 import 'package:f_ecorutas_v1/features/main/domain/usecases/get_room_stream_usecase.dart';
 import 'package:f_ecorutas_v1/features/main/domain/usecases/load_questions_usecase.dart';
@@ -56,7 +55,20 @@ class GuideScreen extends StatelessWidget {
   }
 }
 
-class _GuideView extends StatelessWidget {
+class _GuideView extends StatefulWidget {
+  @override
+  State<_GuideView> createState() => _GuideViewState();
+}
+
+class _GuideViewState extends State<_GuideView> {
+  final TextEditingController _placeController = TextEditingController();
+
+  @override
+  void dispose() {
+    _placeController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,72 +94,77 @@ class _GuideView extends StatelessWidget {
                     code: context.read<GuideBloc>().code,
                   ),
                   SizedBox(height: 20),
-                  // Expanded(
-                  //   child: ListView.builder(
-                  //     itemCount: state.questions.length,
-                  //     itemBuilder: (context, index) {
-                  //       final question = state.questions[index];
-                  //       return RadioListTile(
-                  //         title: Text(question.question),
-                  //         value: index,
-                  //         groupValue: state.selectedIndex,
-                  //         onChanged: (value) {
-                  //           context
-                  //               .read<GuideBloc>()
-                  //               .add(SelectQuestionEvent(value!));
-                  //         },
-                  //       );
-                  //     },
-                  //   ),
-                  // ),
-                  // SizedBox(height: 20),
 
-                  DropdownButton(
-                    value: state.selectedItem,
-                    items: [
-                      DropdownMenuItem(value: 'Ebano', child: Text('Ebano')),
-                      DropdownMenuItem(
-                          value: 'Balsamo de Tolú',
-                          child: Text('Balsamo de Tolú')),
-                      DropdownMenuItem(
-                          value: 'Tamarindo', child: Text('Tamarindo')),
-                      DropdownMenuItem(
-                          value: 'Guayacá bola', child: Text('Guayacá bola')),
-                      DropdownMenuItem(
-                          value: 'Indio encuero', child: Text('Indio encuero')),
-                      DropdownMenuItem(value: 'Bonga', child: Text('Bonga')),
-                      DropdownMenuItem(
-                          value: 'Caracolí', child: Text('Caracolí')),
-                      DropdownMenuItem(value: 'Olivo', child: Text('Olivo')),
-                    ],
+                  TextField(
+                    controller: _placeController,
+                    decoration: InputDecoration(
+                      labelText: 'Nombre del lugar',
+                      border: OutlineInputBorder(),
+                    ),
                     onChanged: (value) {
-                      context
-                          .read<GuideBloc>()
-                          .add(SelectItemEvent(value.toString()));
+                      setState(() {});
                     },
                   ),
 
-                  ElevatedButton(
-                    onPressed: () {
-                      context
-                          .read<GuideBloc>()
-                          .add(SendQuestionEvent(state.questions));
-                    },
-                    child: Text('Enviar Preguntas'),
-                  ),
-                  SizedBox(height: 10),
-                  ElevatedButton(
-                    onPressed: () {
-                      context.read<GuideBloc>().add(FinishRouteEvent());
+                  // DropdownButton(
+                  //   value: state.selectedItem,
+                  //   items: [
+                  //     DropdownMenuItem(value: 'Ebano', child: Text('Ebano')),
+                  //     DropdownMenuItem(
+                  //         value: 'Balsamo de Tolú',
+                  //         child: Text('Balsamo de Tolú')),
+                  //     DropdownMenuItem(
+                  //         value: 'Tamarindo', child: Text('Tamarindo')),
+                  //     DropdownMenuItem(
+                  //         value: 'Guayacá bola', child: Text('Guayacá bola')),
+                  //     DropdownMenuItem(
+                  //         value: 'Indio encuero', child: Text('Indio encuero')),
+                  //     DropdownMenuItem(value: 'Bonga', child: Text('Bonga')),
+                  //     DropdownMenuItem(
+                  //         value: 'Caracolí', child: Text('Caracolí')),
+                  //     DropdownMenuItem(value: 'Olivo', child: Text('Olivo')),
+                  //   ],
+                  //   onChanged: (value) {
+                  //     context
+                  //         .read<GuideBloc>()
+                  //         .add(SelectItemEvent(value.toString()));
+                  //   },
+                  // ),
 
-                      Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                          builder: (context) => MainScreen(),
-                        ),
-                        (Route<dynamic> route) => false,
-                      );
-                    },
-                    child: Text('Finalizar Ruta'),
+                  Row(
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          context
+                              .read<GuideBloc>()
+                              .add(SendQuestionEvent(state.questions));
+                        },
+                        child: Text('Enviar Respuestas'),
+                      ),
+                      SizedBox(width: 10),
+                      ElevatedButton(
+                        onPressed: () {
+                          context
+                              .read<GuideBloc>()
+                              .add(SendQuestionEvent(state.questions));
+                        },
+                        child: Text('Enviar Preguntas'),
+                      ),
+                      SizedBox(width: 10),
+                      ElevatedButton(
+                        onPressed: () {
+                          context.read<GuideBloc>().add(FinishRouteEvent());
+
+                          Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(
+                              builder: (context) => MainScreen(),
+                            ),
+                            (Route<dynamic> route) => false,
+                          );
+                        },
+                        child: Text('Finalizar Ruta'),
+                      ),
+                    ],
                   ),
                 ],
               ),

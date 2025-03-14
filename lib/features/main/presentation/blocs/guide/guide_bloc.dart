@@ -38,6 +38,8 @@ class GuideBloc extends Bloc<GuideEvent, GuideState> {
     on<SelectItemEvent>((event, emit) {
       _onSelectQuestion(event, emit);
     });
+
+    on<SendAnswerEvent>(_onSendAnswer);
   }
 
   Future<void> _onSelectQuestion(
@@ -112,6 +114,11 @@ class GuideBloc extends Bloc<GuideEvent, GuideState> {
     );
 
     // result.fold((failure) => emit(GuideError('Error al enviar')), ()=>)
+  }
+
+  Future<void> _onSendAnswer(SendAnswerEvent event, Emitter<GuideState> emit) {
+    //TODO implmentar
+    print('asdasdasd');
   }
 
   Future<void> _onFinishRoute(

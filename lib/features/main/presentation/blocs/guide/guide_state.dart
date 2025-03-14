@@ -79,3 +79,12 @@ class GuideQuestionSent extends GuideState {
   @override
   List<Object> get props => [message];
 }
+
+class GuideAnswerSent extends GuideState {
+  final String message;
+
+  const GuideAnswerSent(this.message);
+
+  @override
+  List<Object> get props => [message];
+}

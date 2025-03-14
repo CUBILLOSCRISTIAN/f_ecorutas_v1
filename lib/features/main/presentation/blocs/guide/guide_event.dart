@@ -54,3 +54,13 @@ class SelectItemEvent extends GuideEvent {
   @override
   List<Object> get props => [selectedItem];
 }
+
+class SendAnswerEvent extends GuideEvent {
+  final String placeName;
+  final Map<int, int> mapAnswer;
+
+  const SendAnswerEvent({required this.placeName, required this.mapAnswer});
+
+  @override
+  List<Object> get props => [placeName, mapAnswer];
+}
