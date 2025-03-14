@@ -7,8 +7,7 @@ class CodeCard extends StatelessWidget {
   const CodeCard({
     super.key,
     required this.code,
-    this.subTitle =
-        'Comparte este código con tus amigos para que puedan unirse a la sala',
+    this.subTitle = 'Comparte este código para que puedan unirse a la sala',
   });
 
   @override

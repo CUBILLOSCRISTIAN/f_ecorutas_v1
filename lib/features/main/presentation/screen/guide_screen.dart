@@ -5,6 +5,7 @@ import 'package:f_ecorutas_v1/features/main/domain/usecases/load_questions_useca
 import 'package:f_ecorutas_v1/features/main/domain/usecases/send_answer_usecase.dart';
 import 'package:f_ecorutas_v1/features/main/domain/usecases/send_question_usecase.dart';
 import 'package:f_ecorutas_v1/features/main/presentation/blocs/guide/guide_bloc.dart';
+import 'package:f_ecorutas_v1/features/main/presentation/blocs/route/route_bloc.dart';
 import 'package:f_ecorutas_v1/features/main/presentation/screen/main_screen.dart';
 import 'package:f_ecorutas_v1/features/main/presentation/widgets/code_card.dart';
 import 'package:flutter/material.dart';
@@ -58,8 +59,8 @@ class _GuideView extends StatelessWidget {
               child: Column(
                 children: [
                   CodeCard(
-                      code: context.read<GuideBloc>().code,
-                      subTitle: 'Participantes: ${state.participants.length}'),
+                    code: context.read<GuideBloc>().code,
+                  ),
                   SizedBox(height: 20),
                   Expanded(
                     child: ListView.builder(
@@ -80,9 +81,20 @@ class _GuideView extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 20),
+                  DropdownButton<String>(
+                    value: state.selectedCategory,
+                    onChanged: (String? newValue) {},
+                    items: state.categories
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                  SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () {
-                      // _sendQuestion(context);
                       context.read<GuideBloc>().add(SendQuestionEvent(
                           state.questions[state.selectedIndex!].toJson()));
                     },
@@ -93,12 +105,12 @@ class _GuideView extends StatelessWidget {
                     onPressed: () {
                       context.read<GuideBloc>().add(FinishRouteEvent());
 
-                        Navigator.of(context).pushAndRemoveUntil(
+                      Navigator.of(context).pushAndRemoveUntil(
                         MaterialPageRoute(
                           builder: (context) => MainScreen(),
                         ),
                         (Route<dynamic> route) => false,
-                        );
+                      );
                     },
                     child: Text('Finalizar Ruta'),
                   ),

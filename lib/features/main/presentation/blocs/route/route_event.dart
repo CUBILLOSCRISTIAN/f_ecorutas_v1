@@ -54,3 +54,12 @@ class StartEvent extends RouteEvent {
 class StartTrankingEvent extends RouteEvent {
   const StartTrankingEvent();
 }
+
+final class SelectCategoryEvent extends RouteEvent {
+  final String category;
+
+  const SelectCategoryEvent({required this.category});
+
+  @override
+  List<Object> get props => [category];
+}

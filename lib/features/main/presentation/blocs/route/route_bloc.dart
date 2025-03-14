@@ -29,6 +29,11 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
     on<FinishEvent>(_onFinishRoute);
     on<StartEvent>(_onStartRoute);
     on<StartTrankingEvent>(_onStarTranking);
+    on<SelectCategoryEvent>(_onSelectCategory);
+  }
+
+  void _onSelectCategory(SelectCategoryEvent event, Emitter<RouteState> emit) {
+    emit(SelectCategoryState(category: event.category));
   }
 
   void _onCreateRoute(CreateEvent event, Emitter<RouteState> emit) async {
@@ -44,8 +49,16 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
   }
 
   void _onStartRoute(StartEvent event, Emitter<RouteState> emit) async {
-    _emitLoadingState(emit);
-    await startRouteUsecase(event.routeId);
+    // _emitLoadingState(emit);
+    final result = await startRouteUsecase(event.routeId);
+
+    result.fold(
+      (failure) => emit(RouteErrorState(message: failure.message)),
+      (success) => emit(OperationSuccessState(
+        message: 'Route started successfully',
+        code: event.routeId,
+      )),
+    );
   }
 
   void _onJoinRoute(JoinEvent event, Emitter<RouteState> emit) async {

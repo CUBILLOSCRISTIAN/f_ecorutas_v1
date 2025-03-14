@@ -86,6 +86,7 @@ class _MainScreenState extends State<MainScreen> {
     return BlocConsumer<RouteBloc, RouteState>(
       bloc: bloc,
       listener: (context, state) {
+        print('State: $state');
         if (state is OperationSuccessState) {
           // Navegar a otra pantalla cuando la operación es exitosa
           //TODO CAMBIAR ESTO POR UNA SERVICIO DE NAVEGACION GLOBAL

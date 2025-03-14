@@ -29,3 +29,12 @@ final class RouteErrorState extends RouteState {
   @override
   List<Object> get props => [message];
 }
+
+final class SelectCategoryState extends RouteState {
+  final String category;
+
+  const SelectCategoryState({required this.category});
+
+  @override
+  List<Object> get props => [category];
+}

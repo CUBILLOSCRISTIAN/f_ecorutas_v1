@@ -4,6 +4,7 @@ import 'package:f_ecorutas_v1/features/main/presentation/blocs/wating_room/watin
 import 'package:f_ecorutas_v1/features/main/presentation/screen/guide_screen.dart';
 import 'package:f_ecorutas_v1/features/main/presentation/screen/main_screen.dart';
 import 'package:f_ecorutas_v1/features/main/presentation/screen/participant_screen.dart';
+import 'package:f_ecorutas_v1/features/main/presentation/widgets/code_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -48,11 +49,10 @@ class _WatingRoomView extends StatelessWidget {
           // Redirigir a la nueva pantalla cuando la ruta se inicie
 
           isGuide
-              ? Navigator.of(context).pushAndRemoveUntil(
+              ? Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
                     builder: (context) => GuideScreen(code: code),
                   ),
-                  (route) => false,
                 )
               : Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(
@@ -70,41 +70,7 @@ class _WatingRoomView extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              // Card con el código de la sala
-              Card(
-                elevation: 4,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    children: [
-                      Text(
-                        'Código de la sala',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      Text(
-                        code,
-                        style: TextStyle(
-                          fontSize: 24,
-                          color: Colors.blue,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      Text(
-                        'Esperando participantes...',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              CodeCard(code: code),
               SizedBox(height: 20),
 
               // Lista de participantes en tiempo real
