@@ -135,18 +135,8 @@ class _GuideViewState extends State<_GuideView> {
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          context
-                              .read<GuideBloc>()
-                              .add(SendQuestionEvent(state.questions));
-                        },
-                        child: Text('Enviar Respuestas'),
-                      ),
-                      SizedBox(width: 10),
-                      ElevatedButton(
-                        onPressed: () {
-                          context
-                              .read<GuideBloc>()
-                              .add(SendQuestionEvent(state.questions));
+                          context.read<GuideBloc>().add(SendQuestionEvent(
+                              state.questions, _placeController.text));
                         },
                         child: Text('Enviar Preguntas'),
                       ),

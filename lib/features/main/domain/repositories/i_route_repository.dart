@@ -11,7 +11,7 @@ abstract interface class IRouteRepository {
 
   Future<Either<Failure, Stream<dynamic>>> getRoomStream(String code);
   Future<Either<Failure, Unit>> sendQuestion(
-      String code, List<Question> question);
+      String code, List<Question> question, String place);
   Future<Either<Failure, Unit>> sendAnswer(String code, Map<int, int> answer);
 
   Future<Either<Failure, Unit>> startTranking();

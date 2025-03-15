@@ -110,7 +110,7 @@ class FirebaseDataSource implements IRemoteDatasource {
 
   @override
   Future<Either<Failure, Unit>> sendQuestion(
-      String code, List<Map<String, dynamic>> question) async {
+      String code, List<Map<String, dynamic>> question, String place) async {
     try {
       await _firestore.collection('rutas').doc(code).update({
         'pregunta_actual': '',
@@ -120,6 +120,7 @@ class FirebaseDataSource implements IRemoteDatasource {
         'pregunta_actual': question,
         'historial_preguntas': FieldValue.arrayUnion([
           {
+            'lugar': place,
             'pregunta': question,
             'respuestas': [],
             'geolocalizacion': await _getCurrentLocation(),

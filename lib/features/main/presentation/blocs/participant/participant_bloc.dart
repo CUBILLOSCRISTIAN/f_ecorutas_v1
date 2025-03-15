@@ -15,6 +15,7 @@ class ParticipantBloc extends Bloc<ParticipantEvent, ParticipantState> {
   StreamSubscription? _subscription;
 
   bool isAnswered = false;
+  int numberOfQuestions = 0;
 
   ParticipantBloc({
     required this.code,
@@ -70,8 +71,14 @@ class ParticipantBloc extends Bloc<ParticipantEvent, ParticipantState> {
             }
 
             final data = snapshot.data() as Map<String, dynamic>? ?? {};
+            final history = data['historial_preguntas'] ?? [];
             final currentQuestion = data['pregunta_actual'] ?? '';
             final status = data['status'] ?? 'esperando';
+
+            if (numberOfQuestions != history.length) {
+              numberOfQuestions = history.length;
+              isAnswered = false;
+            }
 
             if (status == 'finalizado') {
               return ParticipantRouteFinished(code: code, userName: '');

@@ -9,7 +9,7 @@ class SendQuestionUsecase {
   SendQuestionUsecase(this._repository);
 
   Future<Either<Failure, Unit>> call(
-      String code, List<Question> questions) async {
-    return await _repository.sendQuestion(code, questions);
+      String code, List<Question> questions, String place) async {
+    return await _repository.sendQuestion(code, questions, place);
   }
 }

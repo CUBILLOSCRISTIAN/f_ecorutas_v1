@@ -14,7 +14,7 @@ abstract interface class IRemoteDatasource {
 
   Future<Either<Failure, Stream<dynamic>>> getRoomStream(String code);
   Future<Either<Failure, Unit>> sendQuestion(
-      String code, List<Map<String, dynamic>> question);
+      String code, List<Map<String, dynamic>> question, String place);
   Future<Either<Failure, Unit>> sendAnswer(String code, Map<int, int> answer);
   Future<Either<Failure, Unit>> finishRoute(String routeId);
 }

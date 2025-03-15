@@ -106,7 +106,7 @@ class GuideBloc extends Bloc<GuideEvent, GuideState> {
     SendQuestionEvent event,
     Emitter<GuideState> emit,
   ) async {
-    var result = await sendQuestionUsecase(code, event.questions);
+    var result = await sendQuestionUsecase(code, event.questions, event.place);
 
     result.fold(
       (fail) => emit(GuideError('Error al enviar')),
@@ -116,7 +116,8 @@ class GuideBloc extends Bloc<GuideEvent, GuideState> {
     // result.fold((failure) => emit(GuideError('Error al enviar')), ()=>)
   }
 
-  Future<void> _onSendAnswer(SendAnswerEvent event, Emitter<GuideState> emit) {
+  Future<void> _onSendAnswer(
+      SendAnswerEvent event, Emitter<GuideState> emit) async {
     //TODO implmentar
     print('asdasdasd');
   }

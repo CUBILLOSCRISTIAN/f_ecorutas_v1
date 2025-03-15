@@ -13,11 +13,12 @@ class LoadGuideDataEvent extends GuideEvent {
 
 class SendQuestionEvent extends GuideEvent {
   final List<Question> questions;
+  final String place;
 
-  const SendQuestionEvent(this.questions);
+  const SendQuestionEvent(this.questions, this.place);
 
   @override
-  List<Object> get props => [questions];
+  List<Object> get props => [questions, place];
 }
 
 class FinishRouteEvent extends GuideEvent {

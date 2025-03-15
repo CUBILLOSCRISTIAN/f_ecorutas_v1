@@ -68,9 +68,9 @@ class RouteRepositoryImpl implements IRouteRepository {
 
   @override
   Future<Either<Failure, Unit>> sendQuestion(
-      String code, List<Question> question) {
+      String code, List<Question> question, String place) {
     var questionTransform = question.map((e) => e.toJson()).toList();
-    return _remoteDatasource.sendQuestion(code, questionTransform);
+    return _remoteDatasource.sendQuestion(code, questionTransform, place);
   }
 
   @override
